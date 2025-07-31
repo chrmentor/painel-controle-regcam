@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle - Regulariza Caminhoneiro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <img src="https://regularizacaminhoneiro.com/logo.png" alt="Regulariza Caminhoneiro" class="login-logo">
+                <h1>Painel de Controle</h1>
+                <p>Acesso restrito para administradores</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Entrar
+                </button>
+            </form>
+            <div id="loginError" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Painel Principal -->
+    <div id="mainPanel" class="main-panel" style="display: none;">
+        <!-- Header -->
+        <header class="panel-header">
+            <div class="header-left">
+                <img src="https://regularizacaminhoneiro.com/logo.png" alt="Logo" class="header-logo">
+                <h1>Painel de Controle</h1>
+            </div>
+            <div class="header-right">
+                <span id="adminName" class="admin-name"></span>
+                <button id="logoutBtn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
+                </button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+                <a href="#codes" class="nav-item" data-section="codes">
+                    <i class="fas fa-code"></i>
+                    Códigos de Rastreamento
+                </a>
+                <a href="#visits" class="nav-item" data-section="visits">
+                    <i class="fas fa-chart-line"></i>
+                    Estatísticas de Visitas
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Dashboard -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h2>Dashboard</h2>
+                    <p>Visão geral do seu site</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="visitsToday">0</h3>
+                            <p>Visitas Hoje</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="uniqueVisitsToday">0</h3>
+                            <p>Visitantes Únicos Hoje</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-month"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="visitsThisMonth">0</h3>
+                            <p>Visitas Este Mês</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="activeCodes">0</h3>
+                            <p>Códigos Ativos</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="chart-container">
+                        <h3>Visitas dos Últimos 30 Dias</h3>
+                        <canvas id="visitsChart"></canvas>
+                    </div>
+                    <div class="recent-activity">
+                        <h3>Última Visita</h3>
+                        <div id="lastVisit" class="last-visit-info">
+                            <p>Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Códigos de Rastreamento -->
+            <section id="codes" class="content-section">
+                <div class="section-header">
+                    <h2>Códigos de Rastreamento</h2>
+                    <button id="addCodeBtn" class="btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Adicionar Código
+                    </button>
+                </div>
+
+                <div class="codes-container">
+                    <div id="codesList" class="codes-list">
+                        <!-- Códigos serão carregados aqui -->
+                    </div>
+                </div>
+
+                <div class="apply-codes-section">
+                    <button id="generateSiteCodeBtn" class="btn-success">
+                        <i class="fas fa-code"></i>
+                        Gerar Código para Site
+                    </button>
+                    <p class="apply-codes-info">
+                        Clique para gerar o código HTML/JavaScript consolidado para colar no seu site principal.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Estatísticas de Visitas -->
+            <section id="visits" class="content-section">
+                <div class="section-header">
+                    <h2>Estatísticas de Visitas</h2>
+                    <button id="exportVisitsBtn" class="btn-secondary">
+                        <i class="fas fa-download"></i>
+                        Exportar CSV
+                    </button>
+                </div>
+
+                <div class="visits-filters">
+                    <input type="date" id="startDate" class="date-input">
+                    <input type="date" id="endDate" class="date-input">
+                    <button id="filterVisitsBtn" class="btn-primary">Filtrar</button>
+                </div>
+
+                <div class="visits-table-container">
+                    <table id="visitsTable" class="visits-table">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>IP</th>
+                                <th>Página</th>
+                                <th>Referrer</th>
+                                <th>Única</th>
+                            </tr>
+                        </thead>
+                        <tbody id="visitsTableBody">
+                            <!-- Visitas serão carregadas aqui -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="visitsPagination" class="pagination">
+                    <!-- Paginação será carregada aqui -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Adicionar/Editar Código -->
+    <div id="codeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Adicionar Código</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="codeForm" class="modal-form">
+                <input type="hidden" id="codeId">
+                <div class="form-group">
+                    <label for="codeName">Nome do Código</label>
+                    <input type="text" id="codeName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="codeDescription">Descrição</label>
+                    <textarea id="codeDescription" name="description" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="codePosition">Posição</label>
+                    <select id="codePosition" name="position" required>
+                        <option value="head">Cabeçalho (Head)</option>
+                        <option value="body">Corpo (Body)</option>
+                        <option value="footer">Rodapé (Footer)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="codeContent">Código HTML/JavaScript</label>
+                    <textarea id="codeContent" name="code_content" rows="8" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary modal-cancel">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
